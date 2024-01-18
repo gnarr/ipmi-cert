@@ -25,6 +25,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         git-message: 'chore(release): {version}'
         version-file: 'pyproject.toml'
+        version-path: 'tool.poetry.version'
         output-file: 'CHANGELIST.md'
 
     - name: Log in to Docker Hub
