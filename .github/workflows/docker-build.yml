@@ -24,6 +24,8 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         git-message: 'chore(release): {version}'
+        git-user-name: 'gnarr'
+        git-user-email: 'gnarr.c@gmail.com'
         version-file: 'pyproject.toml'
         version-path: 'tool.poetry.version'
         output-file: 'CHANGELIST.md'
