@@ -11,6 +11,22 @@ jobs:
     - name: Check Out Repo
       uses: actions/checkout@v2
 
+    - name: Get Next Version
+      id: semver
+      uses: ietf-tools/semver-action@v1
+      with:
+        token: ${{ github.token }}
+        branch: main
+
+    - name: Generate Changelog
+      id: changelog
+      uses: TriPSs/conventional-changelog-action@v3
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        git-message: 'chore(release): {version}'
+        version-file: 'pyproject.toml'
+        output-file: 'CHANGELIST.md'
+
     - name: Log in to Docker Hub
       uses: docker/login-action@v1
       with:
@@ -21,8 +37,9 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: gnarr/ipmi-cert:latest
-        file: ./Dockerfile
+        tags: |
+          gnarr/ipmi-cert:latest
+          gnarr/ipmi-cert:${{ steps.semver.outputs.nextStrict }}
 
     - name: Update Docker Hub Description
       uses: peter-evans/dockerhub-description@v2
