@@ -1,3 +1,12 @@
+# [1.4.0](https://github.com/gnarr/ipmi-cert/compare/v1.3.0...v1.4.0) (2024-01-19)
+
+
+### Features
+
+* add option for immediate initial run in Docker setup ([8a4b41d](https://github.com/gnarr/ipmi-cert/commit/8a4b41d2fe7b7c07d08eebe298c848a2dd68f72e))
+
+
+
 # [1.3.0](https://github.com/gnarr/ipmi-cert/compare/v1.2.0...v1.3.0) (2024-01-19)
 
 
