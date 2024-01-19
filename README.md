@@ -15,7 +15,9 @@ This is a modified version of `Supermicro IPMI certificate updater` with a docke
 #### Configurable environment variables:
 - `IPMI_URL` Supermicro IPMI 2.0 URL
 - `USERNAME` IPMI username with admin access
+- `USERNAME_FILE` a file containing the username. Overrides `USERNAME` when supplied.
 - `PASSWORD` IPMI user password
+- `PASSWORD_FILE` a file containing the password. Overrides `USERNAME` when supplied.
 - `KEY_FILE` X.509 Private key filename (default: `"/cert/privkey.pem"`)
 - `CERT_FILE` X.509 Certificate filename (default: `"/cert/cert.pem"`)
 - `CRON_STRING` [cront string](https://crontab.guru/) running schedule (default: `"5 6 * * *"`)
@@ -32,6 +34,13 @@ Example running AWS route53 [DNS-01 challenge](https://doc.traefik.io/traefik/ht
 
 ```yaml
 version: "3.8"
+
+secrets:
+  username:
+    file: username.txt
+  password:
+    file: password.txt
+
 services:
 
   traefik:
@@ -99,15 +108,21 @@ services:
   ipmi-cert:
     container_name: ipmi-cert
     image: gnarr/ipmi-cert:latest
+    secrets:
+      - username
+      - password
     environment:
       IPMI_URL: https://ipmi.example.com
-      USERNAME: admin
-      PASSWORD: P@$$w0rd
+      # username and password can be supplied as strings, but using secrets is recommended, as is done in this example.
+      # USERNAME: admin
+      # PASSWORD: P@$$w0rd
+      USERNAME_FILE: /run/secrets/username
+      PASSWORD_FILE: /run/secrets/password
       KEY_FILE: /cert/privkey.pem
       CERT_FILE: /cert/cert.pem
       CRON_STRING: "5 6 * * *"
     volumes:
-      - /home/admin/certificates/_.example.com/:/cert
+      - /home/admin/certificates/_.example.com/:/cert:ro
     restart: unless-stopped
 ```
 

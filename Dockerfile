@@ -26,7 +26,9 @@ ENV CRON_STRING="5 6 * * *" \
     KEY_FILE="/cert/privkey.pem" \
     CERT_FILE="/cert/cert.pem" \
     USERNAME="" \
+    USERNAME_FILE="" \
     PASSWORD="" \
+    PASSWORD_FILE="" \
     NO_REBOOT="false" \
     SKIP_EXPIRY_CHECK="true" \
     DEBUG="false"
@@ -35,7 +37,6 @@ ENV CRON_STRING="5 6 * * *" \
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-RUN which poetry
 # Set the entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
 

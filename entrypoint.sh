@@ -16,6 +16,14 @@ if [ "$DEBUG" = "true" ]; then
   DEBUG_FLAG="--debug"
 fi
 
+if [ -n "$USERNAME_FILE" ] && [ -f "$USERNAME_FILE" ]; then
+  USERNAME=$(cat "$USERNAME_FILE")
+fi
+
+if [ -n "$PASSWORD_FILE" ] && [ -f "$PASSWORD_FILE" ]; then
+  PASSWORD=$(cat "$PASSWORD_FILE")
+fi
+
 # Find the path of the poetry executable
 POETRY_PATH=$(which poetry)
 
