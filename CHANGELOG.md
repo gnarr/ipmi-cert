@@ -1,3 +1,12 @@
+# [1.3.0](https://github.com/gnarr/ipmi-cert/compare/v1.2.0...v1.3.0) (2024-01-19)
+
+
+### Features
+
+* support username and password from files in Docker container ([8467177](https://github.com/gnarr/ipmi-cert/commit/84671779ec3ca8c5dd0446a8647b4a08ca5d92e9))
+
+
+
 # [1.2.0](https://github.com/gnarr/ipmi-cert/compare/v1.1.0...v1.2.0) (2024-01-19)
 
 
