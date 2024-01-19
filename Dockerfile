@@ -28,12 +28,8 @@ ENV CRON_STRING="5 6 * * *" \
     USERNAME="" \
     PASSWORD="" \
     NO_REBOOT="false" \
-    LEAD_TIME_DAYS="7" \
+    SKIP_EXPIRY_CHECK="true" \
     DEBUG="false"
-
-# Create a script to run your Python program with arguments
-RUN echo "cd /app && poetry run python main.py --ipmi-url \$IPMI_URL --key-file \$KEY_FILE --cert-file \$CERT_FILE --username \$USERNAME --password \$PASSWORD --no-reboot \$NO_REBOOT --lead-time-days \$LEAD_TIME_DAYS --debug \$DEBUG" > /run_cert_update.sh
-RUN chmod +x /run_cert_update.sh
 
 # Copy the entrypoint script
 COPY entrypoint.sh /entrypoint.sh

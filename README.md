@@ -3,11 +3,11 @@
 This is a modified version of `Supermicro IPMI certificate updater` with a docker to run as a daemon.
 
 ### Differences from Jari's original SICU
-- --quiet flag has been removed in favor of a --debug flag
+- `--quiet` flag has been removed in favor of a `--debug` flag
     - logs are are seperated into debug, info, warning and error levels
     - program always prints info, warning and error logs
-- there has been added a --lead-time-days flag with a default value of 7
-    - remote certificate expiry is checked and if the expiry date is not within the lead-time, it will not be updated
+- IPMI certificate expiry is checked against the supplied PEM certificate expiry, if same, certificate will not be updated
+  - there has been added a `--skip-expiry-check` flag with a default value of false
 
 
 ### Running with docker
@@ -19,9 +19,9 @@ This is a modified version of `Supermicro IPMI certificate updater` with a docke
 - `KEY_FILE` X.509 Private key filename (default: `"/cert/privkey.pem"`)
 - `CERT_FILE` X.509 Certificate filename (default: `"/cert/cert.pem"`)
 - `CRON_STRING` [cront string](https://crontab.guru/) running schedule (default: `"5 6 * * *"`)
+- `SKIP_EXPIRY_CHECK` Ignore checking if the IPMI certificate and the supplied certificate have the same expiry date. (default: `"false"`)
 - `NO_REBOOT` The default is to reboot the IPMI after upload for the change to take effect (default: `"false"`)
-- `LEAD_TIME_DAYS` Do not upload an updated certificate unless there is less than this number off days until expiry (default: `""7"`)
-- `DEBUG` Run with debug logging (default: `""false"`)
+- `DEBUG` Run with debug logging (default: `"false"`)
 
 ```sh
   docker run -d -e IPMI_URL="https://ipmi.example.com" -e USERNAME="admin" -e PASSWORD="P@$$w0rd" -e KEY_FILE=/cert/key.pem -e CERT_FILE=/cert/cert.pem -v /local/path/to/certs/:/cert:ro ipmi-cert
@@ -107,7 +107,7 @@ services:
       CERT_FILE: /cert/cert.pem
       CRON_STRING: "5 6 * * *"
     volumes:
-      - /home/admin/certificates:/certs
+      - /home/admin/certificates/_.example.com/:/cert
     restart: unless-stopped
 ```
 

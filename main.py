@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import datetime
 import logging
 import os
 import re
@@ -9,6 +10,8 @@ from datetime import datetime
 from urllib.parse import urlparse
 
 import requests
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
 from lxml import etree
 
 REQUEST_TIMEOUT = 5.0
@@ -346,11 +349,16 @@ def determine_model(session, ipmi_url):
         return "X10"
 
 
-def days_until_cert_expiry(cert_info):
-    expiry_date = datetime.strptime(cert_info["valid_until"], "%b %d %H:%M:%S %Y")
-    today = datetime.now().date()
-    delta = expiry_date.date() - today
-    return max(delta.days, 0)
+def get_ipmi_cert_expiry_date(cert_info) -> datetime:
+    return datetime.strptime(cert_info["valid_until"], "%b %d %H:%M:%S %Y")
+
+
+def get_pem_cert_expiry_date(pem_file_path) -> datetime:
+    with open(pem_file_path, "rb") as f:
+        pem_data = f.read()
+    cert = x509.load_pem_x509_certificate(pem_data, default_backend())
+    expiry_date = cert.not_valid_after
+    return expiry_date
 
 
 def main():
@@ -370,10 +378,9 @@ def main():
         help="The default is to reboot the IPMI after upload for the change to take effect",
     )
     parser.add_argument(
-        "--lead-time-days",
-        default=7,
-        type=int,
-        help="Do not upload an updated certificate unless there is less than this number off days until expiry",
+        "--skip-expiry-check",
+        action="store_true",
+        help="Ignore checking if the IPMI certificate and the supplied certificate have the same expiry date.",
     )
     parser.add_argument("--debug", action="store_true", help="Run with debug logging")
     args = parser.parse_args()
@@ -421,11 +428,15 @@ def main():
             % cert_info["valid_until"]
         )
 
-    if days_until_cert_expiry(cert_info) > args.lead_time_days:
-        logging.warning(
-            f"Certificate expiry lead up ({args.lead_time_days} days) has not passed. Certificate will not be updated!"
-        )
-        exit(2)
+    if not args.skip_expiry_check:
+        pem_cert_expiry_date = get_pem_cert_expiry_date(args.cert_file)
+        ipmi_cert_expiry_date = get_ipmi_cert_expiry_date(cert_info)
+        if pem_cert_expiry_date == ipmi_cert_expiry_date:
+            logging.warning(
+                "IPMI certificate expiry date is the same as that of the supplied certificate. "
+                "IPMI certificate will not be updated unless '--skip-expiry-check' flag is set."
+            )
+            exit(2)
 
     # Go upload!
     if not updater.upload_cert(args.key_file, args.cert_file):
