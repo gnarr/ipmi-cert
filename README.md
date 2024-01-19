@@ -15,15 +15,16 @@ This is a modified version of `Supermicro IPMI certificate updater` with a docke
 #### Configurable environment variables:
 - `IPMI_URL` Supermicro IPMI 2.0 URL
 - `USERNAME` IPMI username with admin access
-- `USERNAME_FILE` a file containing the username. Overrides `USERNAME` when supplied.
+- `USERNAME_FILE` A file containing the username. Overrides `USERNAME` when supplied.
 - `PASSWORD` IPMI user password
-- `PASSWORD_FILE` a file containing the password. Overrides `USERNAME` when supplied.
+- `PASSWORD_FILE` A file containing the password. Overrides `USERNAME` when supplied.
 - `KEY_FILE` X.509 Private key filename (default: `"/cert/privkey.pem"`)
 - `CERT_FILE` X.509 Certificate filename (default: `"/cert/cert.pem"`)
 - `CRON_STRING` [cront string](https://crontab.guru/) running schedule (default: `"5 6 * * *"`)
 - `SKIP_EXPIRY_CHECK` Ignore checking if the IPMI certificate and the supplied certificate have the same expiry date. (default: `"false"`)
 - `NO_REBOOT` The default is to reboot the IPMI after upload for the change to take effect (default: `"false"`)
 - `DEBUG` Run with debug logging (default: `"false"`)
+- `RUN_IMMEDIATELY` One initial update is run as soon as the container starts, before starting the CRON schedule.
 
 ```sh
   docker run -d -e IPMI_URL="https://ipmi.example.com" -e USERNAME="admin" -e PASSWORD="P@$$w0rd" -e KEY_FILE=/cert/key.pem -e CERT_FILE=/cert/cert.pem -v /local/path/to/certs/:/cert:ro ipmi-cert

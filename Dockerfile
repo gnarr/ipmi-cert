@@ -31,7 +31,8 @@ ENV CRON_STRING="5 6 * * *" \
     PASSWORD_FILE="" \
     NO_REBOOT="false" \
     SKIP_EXPIRY_CHECK="true" \
-    DEBUG="false"
+    DEBUG="false" \
+    RUN_IMMEDIATELY="false"
 
 # Copy the entrypoint script
 COPY entrypoint.sh /entrypoint.sh
@@ -39,4 +40,3 @@ RUN chmod +x /entrypoint.sh
 
 # Set the entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
-

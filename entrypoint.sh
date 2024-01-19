@@ -33,5 +33,11 @@ echo "$CRON_STRING cd /app && $POETRY_PATH run python /app/main.py --ipmi-url \$
 # Ensure environment variables are available for cron jobs
 printenv | grep -v "no_proxy" >> /etc/environment
 
+if [ "$RUN_IMMEDIATELY" = "true" ]; then
+  echo "Initial run before starting CRON schedule"
+  cd /app && $POETRY_PATH run python /app/main.py --ipmi-url $IPMI_URL --key-file $KEY_FILE --cert-file $CERT_FILE --username $USERNAME --password $PASSWORD $SKIP_EXPIRY_CHECK $NO_REBOOT_FLAG $DEBUG_FLAG
+fi
+
+echo "Setup complete! Now waiting for CRON schedule ( $CRON_STRING )"
 # Start the cron daemon in the foreground
 cron -f
